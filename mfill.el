@@ -8,6 +8,9 @@
 ;;         (beg (progn (backward-paragraph) (skip-chars-forward " \t\n") (point))))
 ;;     (mfill-make-word-splittability-list (mfill-get-word-class-list beg end))))
 
+;; Explicitly load kinsoku.el to initialize kinsoku char category.
+(load "kinsoku")
+
 (defvar mfill-mecab-program-path "C:/Program Files/MeCab/bin/mecab.exe")
 
 (defun mfill-get-word-class-list (beg end)
