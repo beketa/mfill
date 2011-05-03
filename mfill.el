@@ -42,11 +42,11 @@
 	     1)
 	    ((and
 	      ;; word1 does not end with gyoumatsu kinsoku.
-	      (not (aref (char-category-set (aref word1 0)) ?<))
+	      (not (aref (char-category-set (aref word1 (1- (length word1)))) ?<))
 	      ;; word2 does not start with gyoutou kinsoku.
-	      (not (aref (char-category-set (aref word2 (1- (length word2)))) ?>))
+	      (not (aref (char-category-set (aref word2 0)) ?>))
 	      
-	      (not (string-match "Ú“ªŒ-" class1))
+	      (not (string-match "Ú“ªŒ" class1))
 	      
 	      (not (string-match "”ñ©—§" class2))
 	      (not (string-match "Ú”ö" class2))
