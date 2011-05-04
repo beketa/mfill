@@ -65,21 +65,21 @@
 (defun mfill-make-word-splittability-list (word-class-list)
   (if (null word-class-list)
       '()
-    (let ((word (caar word-class-list))
-	  (class (cdar word-class-list))
-	  (prev-word nil)
-	  (prev-class nil)
-	  (word-class-list (cdr word-class-list))
-	  result)
+    (let* ((word (caar word-class-list))
+	   (class (cdar word-class-list))
+	   (prev-word nil)
+	   (prev-class nil)
+	   (word-class-list (cdr word-class-list))
+	   (result (list (cons word 0))))
       (while word-class-list
 	(setq result (cons (cons word (mfill-word-class-splittability prev-word prev-class
 								      word class))
 			   result)
 	      prev-word word
 	      prev-class class
+	      word-class-list (cdr word-class-list)
 	      word (caar word-class-list)
-	      class (cdar word-class-list)
-	      word-class-list (cdr word-class-list)))
+	      class (cdar word-class-list)))
       (nreverse result))))
 
 (defun mfill-fill-paragraph ()
@@ -117,7 +117,16 @@
 		   (setq splittable-point (point)
 			 prev-words words)))
 	     
-	     (setq words (cdr words))))))
-       )))
+	     (setq words (cdr words))))
+
+	 ;; Here the point is at the beginning of the last word of paragraph.
+	 ;; Check if the last word exceeds fill column and fold if necessary.
+	 (end-of-line)
+	 (when (and (<= (current-fill-column) (current-column))
+		    splittable-point)
+	   (goto-char splittable-point)
+	   (insert "\n"))
+	 
+	 )))))
 
 (provide 'mfill)
