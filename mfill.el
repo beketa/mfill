@@ -73,22 +73,22 @@
 (defun mfill-make-word-splittability-list (word-class-list)
   (if (null word-class-list)
       '()
-    (let* ((word (caar word-class-list))
-	   (class (cdar word-class-list))
-	   (prev-word nil)
-	   (prev-class nil)
+    (let* ((prev-word (caar word-class-list))
+	   (prev-class (cdar word-class-list))
+	   (result (list (cons prev-word 0)))
 	   (word-class-list (cdr word-class-list))
-	   (result (list (cons word 0))))
+	   (word nil)
+	   (class nil))
       (while word-class-list
-	(setq result (cons (cons word (mfill-word-class-splittability
+	(setq word (caar word-class-list)
+	      class (cdar word-class-list)
+	      result (cons (cons word (mfill-word-class-splittability
 				       prev-word prev-class
 				       word class))
 			   result)
 	      prev-word word
 	      prev-class class
-	      word-class-list (cdr word-class-list)
-	      word (caar word-class-list)
-	      class (cdar word-class-list)))
+	      word-class-list (cdr word-class-list)))
       (nreverse result))))
 
 (defun mfill-fill-paragraph ()
