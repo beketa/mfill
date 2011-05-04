@@ -114,25 +114,31 @@
 	     (while (not (string= (buffer-substring-no-properties
 				   (point) (+ (point) (length word)))
 				  word))
-	       (forward-char))
-	     (if (<= (current-fill-column) (current-column))
-		 
-		 (if (null splittable-point)
-		     ;; There is no splittable point before.
-		     (insert "\n")
-		   (goto-char splittable-point)
-		   (insert "\n")
-		   (setq words prev-words)
-		   (setq splittable-point nil
-			 prev-words nil))
-	       
-	       (if (>= splittability 1)
-		   (setq splittable-point (point)
-			 prev-words words)))
-	     
+	       ;; There is a white space or something before this word.
+	       (forward-char)
+	       ;; And if word does not start with gyoutou kinsoku, we can
+	       ;; insert line break here.
+	       (if (not (aref (char-category-set (aref word 0)) ?>))
+		   (setq splittability 1)))
+	     (cond ((<= (current-fill-column) (current-column))
+		    (if (null splittable-point)
+			;; There is no splittable point before.
+			(insert "\n")
+		      (goto-char splittable-point)
+		      (insert "\n")
+		      (setq words prev-words
+			    word (caar words)))
+		    (setq splittable-point nil
+			  prev-words nil))
+		   (t
+		    (if (>= splittability 1)
+			(setq splittable-point (point)
+			      prev-words words))))
+
+	     (forward-char (length word))
 	     (setq words (cdr words))))
 
-	 ;; Here the point is at the beginning of the last word of paragraph.
+	 ;; Here the point is at the end of the last word of paragraph.
 	 ;; Check if the last word exceeds fill column and fold if necessary.
 	 (end-of-line)
 	 (when (and (<= (current-fill-column) (current-column))
