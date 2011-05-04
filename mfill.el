@@ -4,9 +4,14 @@
 ;;
 ;; (save-excursion
 ;;   (goto-char 10)
-;;   (let ((end (progn (forward-paragraph) (skip-chars-backward " \t\n") (point)))
-;;         (beg (progn (backward-paragraph) (skip-chars-forward " \t\n") (point))))
-;;     (mfill-make-word-splittability-list (mfill-get-word-class-list beg end))))
+;;   (let ((end (progn (forward-paragraph)
+;;                     (skip-chars-backward " \t\n")
+;;                     (point)))
+;;         (beg (progn (backward-paragraph)
+;;                     (skip-chars-forward " \t\n")
+;;                     (point))))
+;;     (mfill-make-word-splittability-list
+;;      (mfill-get-word-class-list beg end))))
 
 ;; Explicitly load kinsoku.el to initialize kinsoku char category.
 (load "kinsoku")
@@ -19,7 +24,8 @@
       (insert text)
       (fill-delete-newlines (point-min) (copy-marker (point-max) t)
 			    (current-justification) nil nil)
-      (call-process-region (point-min) (point-max) mfill-mecab-program-path t t nil "-O" "chasen")
+      (call-process-region (point-min) (point-max)
+			   mfill-mecab-program-path t t nil "-O" "chasen")
       ;; Escape special charactors.
       (goto-char (point-min))
       (while (search-forward "\\" nil t)
@@ -30,7 +36,8 @@
       
       (goto-char (point-min))
       (insert "(\n")
-      (while (re-search-forward "^\\([^\t]\+\\)\t[^\t]\+\t[^\t]\+\t\\([^\t]\+\\).*$" nil t)
+      (while (re-search-forward
+	      "^\\([^\t]\+\\)\t[^\t]\+\t[^\t]\+\t\\([^\t]\+\\).*$" nil t)
 	(replace-match "(\"\\1\" . \"\\2\")"))
       (insert ")")
       (preceding-sexp))))
@@ -42,7 +49,8 @@
 	     1)
 	    ((and
 	      ;; word1 does not end with gyoumatsu kinsoku.
-	      (not (aref (char-category-set (aref word1 (1- (length word1)))) ?<))
+	      (not (aref (char-category-set (aref word1 (1- (length word1))))
+			 ?<))
 	      ;; word2 does not start with gyoutou kinsoku.
 	      (not (aref (char-category-set (aref word2 0)) ?>))
 	      
@@ -72,8 +80,9 @@
 	   (word-class-list (cdr word-class-list))
 	   (result (list (cons word 0))))
       (while word-class-list
-	(setq result (cons (cons word (mfill-word-class-splittability prev-word prev-class
-								      word class))
+	(setq result (cons (cons word (mfill-word-class-splittability
+				       prev-word prev-class
+				       word class))
 			   result)
 	      prev-word word
 	      prev-class class
@@ -89,8 +98,11 @@
      (when (zerop (forward-paragraph))
        (skip-chars-backward " \t\n")
        (let* ((end (copy-marker (point) t))
-	      (beg (progn (backward-paragraph) (skip-chars-forward " \t\n") (point)))
-	      (words (mfill-make-word-splittability-list (mfill-get-word-class-list beg end)))
+	      (beg (progn (backward-paragraph)
+			  (skip-chars-forward " \t\n")
+			  (point)))
+	      (words (mfill-make-word-splittability-list
+		      (mfill-get-word-class-list beg end)))
 	      (splittable-point nil)
 	      (prev-words nil))
 	 ;; TODO: indentation, fill prefix, ...
@@ -99,7 +111,8 @@
 	 (while words
 	   (let ((word (caar words))
 		 (splittability (cdar words)))
-	     (while (not (string= (buffer-substring-no-properties (point) (+ (point) (length word)))
+	     (while (not (string= (buffer-substring-no-properties
+				   (point) (+ (point) (length word)))
 				  word))
 	       (forward-char))
 	     (if (<= (current-fill-column) (current-column))
